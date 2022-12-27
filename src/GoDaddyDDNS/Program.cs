@@ -1,9 +1,6 @@
+using GoDaddyDDNS.Extensions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace GoDaddyDDNS
 {
@@ -18,6 +15,7 @@ namespace GoDaddyDDNS
             Host.CreateDefaultBuilder(args)
                 .ConfigureServices((hostContext, services) =>
                 {
+                    services.AddApplicationServices();
                     services.AddHostedService<Worker>();
                 });
     }
