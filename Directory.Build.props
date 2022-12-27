@@ -1,0 +1,9 @@
+<Project>
+  <PropertyGroup>
+    <Version>1.0.0</Version>
+    <Authors>Tudor Stanciu</Authors>
+    <Company>STA</Company>
+    <PackageTags>GoDaddyDDNS</PackageTags>
+    <Copyright>STA GoDaddyDDNS</Copyright>
+  </PropertyGroup>
+</Project>

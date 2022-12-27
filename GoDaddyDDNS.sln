@@ -5,12 +5,13 @@ VisualStudioVersion = 17.2.32526.322
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{0935CA6B-5C67-4503-9700-849721AAA61E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GoDaddyDDNS", "src\GoDaddyDDNS\GoDaddyDDNS.csproj", "{63210018-9CF9-48ED-A99B-BE6B29F2B080}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GoDaddyDDNS", "src\GoDaddyDDNS\GoDaddyDDNS.csproj", "{63210018-9CF9-48ED-A99B-BE6B29F2B080}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "solution items", "solution items", "{F0FD0A54-278C-4D7D-9F3A-6424DA2A0CD3}"
 	ProjectSection(SolutionItems) = preProject
 		.gitattributes = .gitattributes
 		.gitignore = .gitignore
+		Directory.Build.props = Directory.Build.props
 		README.md = README.md
 	EndProjectSection
 EndProject

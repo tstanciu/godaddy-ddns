@@ -38,7 +38,7 @@ namespace GoDaddyDDNS.Services
             var publicIP = await _publicIPTracker.Get();
             if (PublicIP != publicIP)
             {
-                _logger.LogInformation($"[{DateTime.Now}]: Public IP has changed from '{PublicIP}' to '{publicIP}'");
+                _logger.LogWarning($"[{DateTime.Now}]: Public IP has changed from '{PublicIP}' to '{publicIP}'");
                 var newRecords = DNSRecords.Select(record =>
                 {
                     record.Data = publicIP;
