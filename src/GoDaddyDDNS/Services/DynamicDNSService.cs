@@ -3,6 +3,7 @@ using GoDaddyDDNS.Models;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace GoDaddyDDNS.Services
@@ -23,19 +24,19 @@ namespace GoDaddyDDNS.Services
             _goDaddyConnector=goDaddyConnector;
         }
 
-        public async Task Initialize()
+        public async Task Initialize(CancellationToken cancellationToken)
         {
             // check records
-            var records = await _goDaddyConnector.GetRecords();
+            var records = await _goDaddyConnector.GetRecords(cancellationToken);
             if (records == null || records.Length == 0)
                 throw new Exception("No valid record found.");
             DNSRecords = records;
             PublicIP = records.First().Data;
         }
 
-        public async Task Execute()
+        public async Task Execute(CancellationToken cancellationToken)
         {
-            var publicIP = await _publicIPTracker.Get();
+            var publicIP = await _publicIPTracker.Get(cancellationToken);
             if (PublicIP != publicIP)
             {
                 _logger.LogWarning($"[{DateTime.Now}]: Public IP has changed from '{PublicIP}' to '{publicIP}'");
@@ -45,7 +46,7 @@ namespace GoDaddyDDNS.Services
                     return record;
                 }).ToArray();
 
-                await _goDaddyConnector.UpdateRecords(newRecords);
+                await _goDaddyConnector.UpdateRecords(newRecords, cancellationToken);
 
                 PublicIP = publicIP;
                 DNSRecords = newRecords;

@@ -10,6 +10,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace GoDaddyDDNS.Services
@@ -43,12 +44,12 @@ namespace GoDaddyDDNS.Services
 
         private string GetRecordRoute(string name) => _recordRoute.Replace("{domain}", _domain).Replace("{type}", _recordType).Replace("{name}", name);
 
-        public async Task<DNSRecord[]> GetRecords()
+        public async Task<DNSRecord[]> GetRecords(CancellationToken cancellationToken)
         {
             var list = new List<DNSRecord>();
             foreach (var name in _records)
             {
-                var dnsRecord = await GetRecord(name);
+                var dnsRecord = await GetRecord(name, cancellationToken);
                 if (dnsRecord == null)
                     _logger.LogWarning($"The record '{name}' was not found and will be ignored.");
                 else
@@ -57,12 +58,12 @@ namespace GoDaddyDDNS.Services
             return list.ToArray();
         }
 
-        private async Task<DNSRecord> GetRecord(string name)
+        private async Task<DNSRecord> GetRecord(string name, CancellationToken cancellationToken)
         {
             var route = GetRecordRoute(name);
-            using (var response = await _httpClient.GetAsync(route))
+            using (var response = await _httpClient.GetAsync(route, cancellationToken).ConfigureAwait(false))
             {
-                var resultAsString = await response.Content.ReadAsStringAsync();
+                var resultAsString = await response.Content.ReadAsStringAsync(cancellationToken);
                 if (response.IsSuccessStatusCode)
                 {
                     var result = JsonConvert.DeserializeObject<DNSRecord[]>(resultAsString);
@@ -79,13 +80,13 @@ namespace GoDaddyDDNS.Services
             }
         }
 
-        public async Task UpdateRecords(DNSRecord[] records)
+        public async Task UpdateRecords(DNSRecord[] records, CancellationToken cancellationToken)
         {
             foreach (var record in records)
-                await UpdateRecord(record);
+                await UpdateRecord(record, cancellationToken);
         }
 
-        private async Task UpdateRecord(DNSRecord record)
+        private async Task UpdateRecord(DNSRecord record, CancellationToken cancellationToken)
         {
             var route = GetRecordRoute(record.Name);
             var data = JsonConvert.SerializeObject(new DNSRecord[] { record }, new JsonSerializerSettings
@@ -95,12 +96,12 @@ namespace GoDaddyDDNS.Services
 
             var content = new StringContent(data, Encoding.UTF8, "application/json");
 
-            using (var response = await _httpClient.PutAsync(route, content))
+            using (var response = await _httpClient.PutAsync(route, content, cancellationToken))
             {
                 if (response.IsSuccessStatusCode)
                     return;
                 
-                var resultAsString = await response.Content.ReadAsStringAsync();
+                var resultAsString = await response.Content.ReadAsStringAsync(cancellationToken);
                 var error = JsonConvert.DeserializeObject<ErrorBody>(resultAsString);
                 throw new Exception($"{error.Code}: {error.Message}");
             };

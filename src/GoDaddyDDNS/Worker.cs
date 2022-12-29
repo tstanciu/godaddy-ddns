@@ -29,15 +29,27 @@ namespace GoDaddyDDNS
             while (!stoppingToken.IsCancellationRequested)
             {
                 _logger.LogInformation("Worker running at: {time}", DateTimeOffset.Now);
-                await _dynamicDNSService.Execute();
+                await Execute(stoppingToken);
                 await Task.Delay(_delay, stoppingToken);
+            }
+        }
+
+        private async Task Execute(CancellationToken cancellationToken)
+        {
+            try
+            {
+                await _dynamicDNSService.Execute(cancellationToken);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "An unexpected error was encountered during execution.");
             }
         }
 
         public override async Task StartAsync(CancellationToken cancellationToken)
         {
             _logger.LogInformation("Starting worker...");
-            await _dynamicDNSService.Initialize();
+            await _dynamicDNSService.Initialize(cancellationToken);
             await base.StartAsync(cancellationToken);
         }
 

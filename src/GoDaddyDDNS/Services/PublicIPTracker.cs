@@ -4,6 +4,7 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Net;
 using System.Net.Http;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace GoDaddyDDNS.Services
@@ -21,14 +22,14 @@ namespace GoDaddyDDNS.Services
             _publicIPProviders = configuration.GetSection("PublicIPProviders").Get<string[]>();
         }
 
-        public async Task<string> Get()
+        public async Task<string> Get(CancellationToken cancellationToken)
         {
             if (_publicIPProviders == null || _publicIPProviders.Length == 0)
                 throw new Exception("No public IP provider is configured.");
 
             foreach (var provider in _publicIPProviders)
             {
-                var ip = await GetIP(provider);
+                var ip = await GetIP(provider, cancellationToken);
                 if (ip != null)
                     return ip;
             }
@@ -36,13 +37,13 @@ namespace GoDaddyDDNS.Services
             throw new Exception("The public IP could not be obtained from any of the configured providers.");
         }
 
-        private async Task<string> GetIP(string providerUrl)
+        private async Task<string> GetIP(string providerUrl, CancellationToken cancellationToken)
         {
             string ip = null;
-            using (var response = await _httpClient.GetAsync(providerUrl))
+            using (var response = await _httpClient.GetAsync(providerUrl, cancellationToken).ConfigureAwait(false))
             {
                 if (response.IsSuccessStatusCode)
-                    ip = await response.Content.ReadAsStringAsync();
+                    ip = await response.Content.ReadAsStringAsync(cancellationToken);
                 else
                     return null;
             }

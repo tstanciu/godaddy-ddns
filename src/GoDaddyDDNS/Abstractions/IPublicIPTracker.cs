@@ -1,9 +1,10 @@
-﻿using System.Threading.Tasks;
+﻿using System.Threading;
+using System.Threading.Tasks;
 
 namespace GoDaddyDDNS.Abstractions
 {
     internal interface IPublicIPTracker
     {
-        Task<string> Get();
+        Task<string> Get(CancellationToken cancellationToken);
     }
 }
