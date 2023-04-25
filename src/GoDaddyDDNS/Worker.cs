@@ -14,7 +14,6 @@ namespace GoDaddyDDNS
         private readonly IDynamicDNSService _dynamicDNSService;
         private readonly int _delay;
 
-
         public Worker(ILogger<Worker> logger, IDynamicDNSService dynamicDNSService, IConfiguration configuration)
         {
             _logger=logger;
