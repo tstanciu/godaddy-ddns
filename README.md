@@ -23,7 +23,7 @@ To make this worker functional, a minimum configuration is required:
 * Docker
 
 ## Changelog
-**1.0.0** - The first release version of the service.
-**1.0.1** - ConfigureAwait(false) was set for the http client get async calls.
-**1.0.2** - .NET 6 upgrade.
+**1.0.0** - The first release version of the service.  
+**1.0.1** - ConfigureAwait(false) was set for the http client get async calls.  
+**1.0.2** - .NET 6 upgrade.  
 **1.0.3** - The ```ExecutionTimeInSeconds``` parameter has been replaced with ```ExecutionFrequency``` which accepts values in the format ```30s```, ```10m```, ```1h``` or ```1d```.
