@@ -1,4 +1,5 @@
 using GoDaddyDDNS.Abstractions;
+using GoDaddyDDNS.Utils;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -12,15 +13,15 @@ namespace GoDaddyDDNS
     {
         private readonly ILogger<Worker> _logger;
         private readonly IDynamicDNSService _dynamicDNSService;
-        private readonly int _delay;
+        private readonly TimeSpan _delay;
 
         public Worker(ILogger<Worker> logger, IDynamicDNSService dynamicDNSService, IConfiguration configuration)
         {
             _logger=logger;
             _dynamicDNSService=dynamicDNSService;
 
-            var delayInSeconds = configuration.GetValue<int>("ExecutionTimeInSeconds");
-            _delay = Convert.ToInt32(TimeSpan.FromSeconds(delayInSeconds).TotalMilliseconds);
+            var delay = configuration.GetValue<string>("ExecutionFrequency");
+            _delay = TimeSpanUtils.ParseTimeInterval(delay);
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
